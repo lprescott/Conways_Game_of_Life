@@ -9,6 +9,7 @@ var colorOfDeath = 0;
 var numCol;
 var numRow;
 var grid;
+var nextGeneration;
 
 // The statements in the setup() function
 // execute once when the program begins
@@ -26,7 +27,7 @@ function setup() {
     canvas.position(0,0);
     canvas.style('z-index', '-1');
 
-    // Find the number of cols and rows, and round
+    // Find the number of cols and rows, and round it
     numCol = round(innerWidth/cellSize);
     numRow = round(innerHeight/cellSize);
 
@@ -37,7 +38,13 @@ function setup() {
         grid[x] = new Array(numRow);
     }
 
-    // Call initialize to fill the board randomly
+    // Create a duplicate sized 2D array
+    nextGeneration = new Array(numCol);
+    for(var x = 0; x < numCol; x++) {
+        nextGeneration[x] = new Array(numRow);
+    }
+
+    // Call initialize to fill the grid randomly
     initialize();
 }
 
@@ -50,6 +57,10 @@ function setup() {
 // grid, checking if the bit value is 1 and colors it
 // depending on said bit value.
 function draw() {
+
+    // Create the next generation
+    generation();
+
     for ( var x = 0; x < numCol; x++) {
         for ( var y = 0; y < numRow; y++) {
             
@@ -63,7 +74,8 @@ function draw() {
                 fill(colorOfDeath); 
             }
 
-            // Sets the color used to draw lines and borders around shapes.
+            // Sets the color used to draw lines and borders 
+            // around shapes.
             // stroke(): https://p5js.org/reference/#/p5/stroke 
             stroke(colorOfDeath);
 
@@ -77,7 +89,7 @@ function draw() {
 }
 
 // The initialize function loops through the 2D array
-// grid, assigning a bit value to the grid entry 
+// grid, assigning a bit value to the grid automaton 
 // randomly.
 //
 // All entries on the edge of the grid are set to 0.
@@ -94,8 +106,68 @@ function initialize() {
             } 
             // Middle
             else {
+                // floor(random(2)) has a 50-50 shot of being
+                // 0 or 1
                 grid[x][y] = floor(random(2));
+            }
+
+            // Initialize next generation
+            nextGeneration[x][y] = 0;
+        }
+    }
+}
+
+// The generation function loops through the 2D array
+// grid, and counts the number of neighbors on the grid.
+//
+// A neighbor is defined as being one of the entries in a 
+// 3x3 grid surrounding a automaton.
+//
+// There are 4 possible states after the quantitative 
+// calculation of the number of neighbors. One of which 
+// is a reject state dubbed loneliness.  
+function generation() {
+    for(var x = 1; x < numCol - 1; x++) {
+        for(var y = 1; y < numRow - 1; y++) {
+
+            var numNeighbors = 0;
+            // Add up all the states in a 3x3 surrounding grid
+            for (var i = -1; i <= 1; i++) {
+                for (var j = -1; j <= 1; j++) {
+                    numNeighbors += grid[x+i][y+j];
+                }
+            }
+
+            // We must subtract the activity status of the current
+            // automaton because an automaton cannot have a neighbor of 
+            // itself.
+            numNeighbors -= grid[x][y];
+            
+            // Loneliness
+            if ((grid[x][y] == 1) && (numNeighbors <  2)) {
+                nextGeneration[x][y] = 0;
+            }
+            
+            // Overpopulation   
+            else if ((grid[x][y] == 1) && (numNeighbors >  3)) {
+                nextGeneration[x][y] = 0;
+            }
+            
+            // Reproduction
+            else if ((grid[x][y] == 0) && (numNeighbors == 3)) {
+                nextGeneration[x][y] = 1; 
+            }
+
+            // Stasis
+            else {
+                nextGeneration[x][y] = grid[x][y];
             }
         }
     }
+
+    // Swap the current grid with the next generation, and set next
+    // generation to the current grid.
+    var tempGrid = grid;
+    grid = nextGeneration;
+    nextGeneration = tempGrid;
 }
