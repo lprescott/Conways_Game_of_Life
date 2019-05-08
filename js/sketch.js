@@ -30,9 +30,12 @@ function setup() {
     // Create a 2D array of the columns as an x-axis
     // and the rows as a y-axis, called grid
     grid = new Array(numCol);
-    for(var x = 0; x < numCol; x++){
+    for(var x = 0; x < numCol; x++) {
         grid[x] = new Array(numRow);
     }
+
+    // Call initialize to fill the board randomly
+    initialize();
 }
 
 // The statements in draw() are executed until the
@@ -41,4 +44,28 @@ function setup() {
 // line is executed again.
 function draw() {
     
+}
+
+// The initialize function loops through the 2D array
+// grid, assigning a bit value to the grid entry 
+// randomly.
+//
+// All entries on the edge of the grid are set to 0.
+function initialize() {
+    for(var x = 0; x < numCol; x++) {
+        for(var y = 0; y < numRow; y++) {
+            // Left side, and top
+            if (x == 0 || y == 0) {
+                grid[x][y] = 0;
+            } 
+            // Right side, and bottom
+            else if (x == numCol-1 || y == numRow-1) {
+                grid[x][y] = 0;
+            } 
+            // Middle
+            else {
+                grid[x][y] = floor(random(2));
+            }
+        }
+    }
 }
