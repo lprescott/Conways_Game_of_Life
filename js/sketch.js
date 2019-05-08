@@ -1,6 +1,9 @@
 // Global variables with values
 // The length of one square side
 var cellSize = 40;
+// The color of the grid &/or cells
+var colorOfLive = 255;
+var colorOfDeath = 0;
 
 // Global variables without values
 var numCol;
@@ -13,12 +16,12 @@ function setup() {
     
     // Specifies the number of frames to be displayed 
     // every second. 
-    // https://p5js.org/reference/#/p5/frameRate
+    // frameRate(): https://p5js.org/reference/#/p5/frameRate
     frameRate(1);
 
     // Creates a canvas element in the document, and 
     // sets the dimensions of it in pixels. 
-    // https://p5js.org/reference/#/p5/createCanvas
+    // createCanvas(): https://p5js.org/reference/#/p5/createCanvas
     canvas = createCanvas(innerWidth, innerHeight);
     canvas.position(0,0);
     canvas.style('z-index', '-1');
@@ -42,8 +45,35 @@ function setup() {
 // program is stopped. Each statement is executed in
 // sequence and after the last line is read, the first
 // line is executed again.
+//
+// Here the draw functions loops through the 2D array
+// grid, checking if the bit value is 1 and colors it
+// depending on said bit value.
 function draw() {
-    
+    for ( var x = 0; x < numCol; x++) {
+        for ( var y = 0; y < numRow; y++) {
+            
+            // Determine the color used to fill shapes.
+            // fill(): https://p5js.org/reference/#/p5/fill
+
+            if ((grid[x][y] == 1)) {  // alive cell
+                fill(colorOfLive);
+            }
+            else {                    // dead cell
+                fill(colorOfDeath); 
+            }
+
+            // Sets the color used to draw lines and borders around shapes.
+            // stroke(): https://p5js.org/reference/#/p5/stroke 
+            stroke(colorOfDeath);
+
+            // Draws a rectangle to the screen.
+            // rect(): https://p5js.org/reference/#/p5/rect
+            //
+            // rect(x-coordinate, y-coordinate, width, height);
+            rect(x*cellSize, y*cellSize, cellSize-1, cellSize-1);
+        }
+    }
 }
 
 // The initialize function loops through the 2D array
