@@ -4,10 +4,12 @@
 
 // Global variables with values
 // The length of one square side
-var cellSize = 40;
+var cellSize = 20;
 // The color of the grid &/or cells
 var colorOfLive = 255;
 var colorOfDeath = 0;
+// The speed of the animation
+var fps = 1;
 
 // Global variables without values
 var numCol;
@@ -22,7 +24,7 @@ function setup() {
     // Specifies the number of frames to be displayed 
     // every second. 
     // frameRate(): https://p5js.org/reference/#/p5/frameRate
-    frameRate(1);
+    frameRate(fps);
 
     // Creates a canvas element in the document, and 
     // sets the dimensions of it in pixels. 
@@ -36,16 +38,27 @@ function setup() {
     numRow = round(innerHeight/cellSize);
 
     // Create a 2D array of the columns as an x-axis
-    // and the rows as a y-axis, called grid
+    // and the rows as a y-axis, called grid.
+    //
+    // Create a duplicate sized 2D array, called
+    // nextGeneration.
+    //
+    // Create a third duplicate size 2D array, called
+    // colors;
     grid = new Array(numCol);
+    nextGeneration = new Array(numCol);
+    colors = new Array(numCol);
     for(var x = 0; x < numCol; x++) {
         grid[x] = new Array(numRow);
+        nextGeneration[x] = new Array(numRow);
+        colors[x] = new Array(numRow);
     }
 
-    // Create a duplicate sized 2D array
-    nextGeneration = new Array(numCol);
+    // Start all colors at black
     for(var x = 0; x < numCol; x++) {
-        nextGeneration[x] = new Array(numRow);
+        for(var y = 0; y < numRow; y++){
+            colors[x][y] = color(0,0,0);
+        }
     }
 
     // Call initialize to fill the grid randomly
@@ -70,13 +83,7 @@ function draw() {
             
             // Determine the color used to fill shapes.
             // fill(): https://p5js.org/reference/#/p5/fill
-
-            if ((grid[x][y] == 1)) {  // alive cell
-                fill(colorOfLive);
-            }
-            else {                    // dead cell
-                fill(colorOfDeath); 
-            }
+            fill(colors[x][y]);
 
             // Sets the color used to draw lines and borders 
             // around shapes.
@@ -150,21 +157,31 @@ function generation() {
             // Loneliness
             if ((grid[x][y] == 1) && (numNeighbors <  2)) {
                 nextGeneration[x][y] = 0;
+                colors[x][y] = color(29,85,216);
             }
             
             // Overpopulation   
             else if ((grid[x][y] == 1) && (numNeighbors >  3)) {
                 nextGeneration[x][y] = 0;
+                colors[x][y] = color(255,35,35);
             }
             
             // Reproduction
             else if ((grid[x][y] == 0) && (numNeighbors == 3)) {
                 nextGeneration[x][y] = 1; 
+                colors[x][y] = color(173,255,47);
             }
 
             // Stasis
             else {
                 nextGeneration[x][y] = grid[x][y];
+
+                if(grid[x][y] == 1) {
+                    colors[x][y] = color(255,255,255);
+                } else {
+                    colors[x][y] = color(0,0,0);
+                }
+              
             }
         }
     }
