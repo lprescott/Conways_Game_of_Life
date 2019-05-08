@@ -3,13 +3,9 @@
 // Final Project
 
 // Global variables with values
-// The length of one square side
-var cellSize = 20;
-// The color of the grid &/or cells
-var colorOfLive = 255;
-var colorOfDeath = 0;
-// The speed of the animation
-var fps = 1;
+var cellSize = 10; // The length of one square side
+var fps = 60; // The speed of the animation
+var whiteOnly = 0; // Set this value to 1, for only white automata.
 
 // Global variables without values
 var numCol;
@@ -88,7 +84,7 @@ function draw() {
             // Sets the color used to draw lines and borders 
             // around shapes.
             // stroke(): https://p5js.org/reference/#/p5/stroke 
-            stroke(colorOfDeath);
+            stroke(0);
 
             // Draws a rectangle to the screen.
             // rect(): https://p5js.org/reference/#/p5/rect
@@ -157,19 +153,25 @@ function generation() {
             // Loneliness
             if ((grid[x][y] == 1) && (numNeighbors <  2)) {
                 nextGeneration[x][y] = 0;
-                colors[x][y] = color(29,85,216);
+                
+                if(whiteOnly == 1) colors[x][y] = color(255);
+                else colors[x][y] = color(29,85,216);
             }
             
             // Overpopulation   
             else if ((grid[x][y] == 1) && (numNeighbors >  3)) {
                 nextGeneration[x][y] = 0;
-                colors[x][y] = color(255,35,35);
+
+                if(whiteOnly == 1) colors[x][y] = color(255);
+                else colors[x][y] = color(255,35,35);
             }
             
             // Reproduction
             else if ((grid[x][y] == 0) && (numNeighbors == 3)) {
                 nextGeneration[x][y] = 1; 
-                colors[x][y] = color(173,255,47);
+
+                if(whiteOnly == 1) colors[x][y] = color(255);
+                else colors[x][y] = color(173,255,47);
             }
 
             // Stasis
@@ -177,9 +179,10 @@ function generation() {
                 nextGeneration[x][y] = grid[x][y];
 
                 if(grid[x][y] == 1) {
-                    colors[x][y] = color(255,255,255);
+                    colors[x][y] = color(255);
                 } else {
-                    colors[x][y] = color(0,0,0);
+                    var black = color(0,0,0);
+                    colors[x][y] = (black, 0);
                 }
               
             }
@@ -191,4 +194,29 @@ function generation() {
     var tempGrid = grid;
     grid = nextGeneration;
     nextGeneration = tempGrid;
+}
+
+// The mousePressed() function is called once after every time a 
+// mouse button is pressed over the element. 
+//
+// Pause processing fps.
+function mousePressed() {
+    frameRate(0);
+}
+
+// The mouseReleased() function is called once after every time a 
+// mouse button is released over the element.
+//
+// Set processing back to original fps.
+function mouseReleased() {
+    frameRate(fps);
+}
+
+//The keyPressed() function is called once every time a key is pressed. 
+function keyPressed() {
+
+    // Re-initialize upon space pressed.
+    if(keyCode == 32) { 
+        initialize();
+    }
 }
