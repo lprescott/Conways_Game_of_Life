@@ -1,13 +1,16 @@
 // Luke R. Prescott
 // I-CSI 409
-// Final Project
+// Conway's Game of Life
 
-// Global variables with values
-var cellSize = 10; // The length of one square side
-var fps = 60; // The speed of the animation
-var whiteOnly = 0; // Set this value to 1, for only white automata.
+// ~~~~~~~~~~~~~~~~ Change These Global Variables ~~~~~~~~~~~~~~~~~~~~~
 
-// Global variables without values
+var cellSize = 10;      // The length of one square side in pixels.
+var fps = 30;           // The speed of the animation in frames/second.
+var whiteOnly = 0;      // Set this value to 1 for only white automata.
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Initialized Global Variables
 var numCol;
 var numRow;
 var grid;
@@ -146,8 +149,8 @@ function generation() {
             }
 
             // We must subtract the activity status of the current
-            // automaton because an automaton cannot have a neighbor of 
-            // itself.
+            // automaton because an automaton cannot have a neighbor 
+            // of itself.
             numNeighbors -= grid[x][y];
             
             // Loneliness
@@ -162,8 +165,14 @@ function generation() {
             else if ((grid[x][y] == 1) && (numNeighbors >  3)) {
                 nextGeneration[x][y] = 0;
 
+                // Gradient of overpopulation or just white
                 if(whiteOnly == 1) colors[x][y] = color(255);
-                else colors[x][y] = color(255,35,35);
+                else if (numNeighbors == 4) colors[x][y] = color(255,0,0);
+                else if (numNeighbors == 5) colors[x][y] = color(205,0,0);
+                else if (numNeighbors == 6) colors[x][y] = color(155,0,0);
+                else if (numNeighbors == 7) colors[x][y] = color(105,0,0);
+                else if (numNeighbors == 8) colors[x][y] = color(55,0,0);
+
             }
             
             // Reproduction
@@ -178,6 +187,8 @@ function generation() {
             else {
                 nextGeneration[x][y] = grid[x][y];
 
+                // Check whether stasis is at life or death and
+                // color accordingly
                 if(grid[x][y] == 1) {
                     colors[x][y] = color(255);
                 } else {
@@ -212,7 +223,8 @@ function mouseReleased() {
     frameRate(fps);
 }
 
-//The keyPressed() function is called once every time a key is pressed. 
+// The keyPressed() function is called once every time a key is 
+// pressed. 
 function keyPressed() {
 
     // Re-initialize upon space pressed.
