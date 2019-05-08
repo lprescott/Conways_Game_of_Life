@@ -1,3 +1,7 @@
+// Luke R. Prescott
+// I-CSI 409
+// Final Project
+
 // Global variables with values
 // The length of one square side
 var cellSize = 40;
@@ -124,8 +128,8 @@ function initialize() {
 // 3x3 grid surrounding a automaton.
 //
 // There are 4 possible states after the quantitative 
-// calculation of the number of neighbors. One of which 
-// is a reject state dubbed loneliness.  
+// calculation of the number of neighbors. Two of which 
+// are a reject state dubbed loneliness, and overpopulation.
 function generation() {
     for(var x = 1; x < numCol - 1; x++) {
         for(var y = 1; y < numRow - 1; y++) {
