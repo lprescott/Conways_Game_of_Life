@@ -2,27 +2,42 @@
 // I-CSI 409
 // Conway's Game of Life
 
-// ~~~~~~~~~~~~~~~~ Change These Global Variables ~~~~~~~~~~~~~~~~~~~~~
-
+// Declared Global Variables
 var cellSize = 10;      // The length of one square side in pixels.
 var fps = 10;           // The speed of the animation in frames/second.
-var whiteOnly = 0;      // Set this value to 1 for only white automata.
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Initialized Global Variables
-var numCol;
+var numCol;             
 var numRow;
 var grid;
 var nextGeneration;
+
 var fpsSlider;
-var sizeSlider;
+
+var newColor;
+var stasisColor;
+var unstableColor;
+var lonelyColor;
+var backgroundColor;
 
 var running = true;
 
 // The statements in the setup() function
 // execute once when the program begins
 function setup() {
+
+    // Set color mode
+    colorMode(RGB);
+
+    // Create a color black
+    black = color(0,0,0);
+
+    // Initialize all colors of automata
+    newColor = color(173,255,47);
+    stasisColor = color(220,220,220)
+    unstableColor = color(255,0,0);
+    lonelyColor = color(29,85,216);
+    backgroundColor = color(0,0,0);
     
     // Specifies the number of frames to be displayed 
     // every second. 
@@ -60,7 +75,7 @@ function setup() {
     // Start all colors at black
     for(var x = 0; x < numCol; x++) {
         for(var y = 0; y < numRow; y++){
-            colors[x][y] = color(0,0,0);
+            colors[x][y] = backgroundColor;
         }
     }
 
@@ -75,20 +90,42 @@ function setup() {
     createDiv('<br>&nbsp;Size of automata');
     createDiv('&nbsp;(5+ pixels):');
 
-    sizeInput = createInput(cellSize);
+    sizeInput = createInput(cellSize.toString());
     sizeInput.input(setSizeOnInput);
+
+    // Background color
+    createDiv('<br><br>&nbsp;Background Color:'); 
+    backgroundColorInput = createColorPicker('#000000');
+    backgroundColorInput.input(setBackgroundColor);
+
+    // New color
+    createDiv('<br>&nbsp;New:'); 
+    newbornColorInput = createColorPicker('#adff2f');
+    newbornColorInput.input(setNewColor);
+
+    // Stasis color
+    createDiv('<br>&nbsp;Stable:'); 
+    stasisColorInput = createColorPicker('#DCDCDC');
+    stasisColorInput.input(setStasisColor);
+
+    // Crowded color
+    createDiv('<br>&nbsp;Unstable:'); 
+    unstableColorInput = createColorPicker('#ff0000');
+    unstableColorInput.input(setUnstableColor);
+
+    // Lonely color
+    createDiv('<br>&nbsp;Lonely:'); 
+    lonelyColorInput = createColorPicker('#1d55d8');
+    lonelyColorInput.input(setLonelyColor);
+
+    // Checkbox for outline
+    createDiv('<br>&nbsp;Toggle Outline:'); 
+    outlineCheckbox = createCheckbox('', true);
 
     // Controls
     createDiv('<br>&nbsp;Controls:'); 
     createDiv('&nbsp;- L-Alt: restart'); 
     createDiv('&nbsp;- SPACE: play/pause');
-
-    // Legend
-    createDiv('<br>&nbsp;Legend:'); 
-    createDiv('<div id="green-text">&nbsp;- Green: newborn</div>'); 
-    createDiv('<div id="white-text">&nbsp;- White: stasis</div>'); 
-    createDiv('<div id="red-text">&nbsp;- Red: crowded</div>'); 
-    createDiv('<div id="blue-text">&nbsp;- Blue: lonely</div>'); 
 
     // Call initialize to fill the grid randomly
     initialize();
@@ -104,10 +141,12 @@ function setup() {
 // depending on said bit value.
 function draw() {
 
+    // This allows for a pause feature, see function keyPressed()
     if(!running) return;
 
     // Set fps
     frameRate(fpsSlider.value());
+    background(backgroundColor);
 
     // Create the next generation
     generation();
@@ -122,13 +161,17 @@ function draw() {
             // Sets the color used to draw lines and borders 
             // around shapes.
             // stroke(): https://p5js.org/reference/#/p5/stroke 
-            stroke(0);
+            if (outlineCheckbox.checked()){
+                stroke(backgroundColor);
+            } else {
+                noStroke();
+            }
 
             // Draws a rectangle to the screen.
             // rect(): https://p5js.org/reference/#/p5/rect
             //
             // rect(x-coordinate, y-coordinate, width, height);
-            rect(x*cellSize, y*cellSize, cellSize-1, cellSize-1);
+            rect(x*cellSize, y*cellSize, cellSize, cellSize);
         }
     }
 }
@@ -191,31 +234,26 @@ function generation() {
             // Loneliness
             if ((grid[x][y] == 1) && (numNeighbors <  2)) {
                 nextGeneration[x][y] = 0;
-                
-                if(whiteOnly == 1) colors[x][y] = color(255);
-                else colors[x][y] = color(29,85,216);
+                colors[x][y] = lonelyColor;
             }
             
             // Overpopulation   
             else if ((grid[x][y] == 1) && (numNeighbors >  3)) {
                 nextGeneration[x][y] = 0;
 
-                // Gradient of overpopulation or just white
-                if(whiteOnly == 1) colors[x][y] = color(255);
-                else if (numNeighbors == 4) colors[x][y] = color(255,0,0);
-                else if (numNeighbors == 5) colors[x][y] = color(205,0,0);
-                else if (numNeighbors == 6) colors[x][y] = color(155,0,0);
-                else if (numNeighbors == 7) colors[x][y] = color(105,0,0);
-                else if (numNeighbors == 8) colors[x][y] = color(55,0,0);
+                // Gradient of overpopulation
+                if (numNeighbors == 4) colors[x][y] = unstableColor;
+                else if (numNeighbors == 5) colors[x][y] = lerpColor(unstableColor, black, 0.20);
+                else if (numNeighbors == 6) colors[x][y] = lerpColor(unstableColor, black, 0.40);
+                else if (numNeighbors == 7) colors[x][y] = lerpColor(unstableColor, black, 0.60);
+                else if (numNeighbors == 8) colors[x][y] = lerpColor(unstableColor, black, 0.80);
 
             }
             
             // Reproduction
             else if ((grid[x][y] == 0) && (numNeighbors == 3)) {
                 nextGeneration[x][y] = 1; 
-
-                if(whiteOnly == 1) colors[x][y] = color(255);
-                else colors[x][y] = color(173,255,47);
+                colors[x][y] = newColor;
             }
 
             // Stasis
@@ -225,10 +263,10 @@ function generation() {
                 // Check whether stasis is at life or death and
                 // color accordingly
                 if(grid[x][y] == 1) {
-                    colors[x][y] = color(255);
+                    colors[x][y] = stasisColor;
                 } else {
-                    var black = color(0,0,0);
-                    colors[x][y] = (black, 0);
+                    
+                    colors[x][y] = backgroundColor;
                 }
               
             }
@@ -294,11 +332,48 @@ function setSizeOnInput() {
         // Start all colors at black
         for(var x = 0; x < numCol; x++) {
             for(var y = 0; y < numRow; y++){
-                colors[x][y] = color(0,0,0);
+                colors[x][y] = backgroundColor;
             }
         }
 
         // Call initialize to fill the grid randomly
         initialize();
     }
+}
+
+// On change of the background color from the color picker, the outlying 
+// grid block need to be reset to the supplied color.
+//
+// A variable called backgroundColor is also stored.
+function setBackgroundColor() {
+    backgroundColor = backgroundColorInput.color();
+
+    for(var x = 0; x < numCol; x++) {
+        for(var y = 0; y < numRow; y++) {
+            // Left side, and top
+            if (x == 0 || y == 0 || x == numCol-1 || y == numRow-1) {
+                colors[x][y] = backgroundColor;
+            }
+        }
+    }
+}
+
+// newColor is stored with the color picker's result.
+function setNewColor() {
+    newColor = newbornColorInput.color();
+}
+
+// stasisColor is stored with the color picker's result.
+function setStasisColor() {
+    stasisColor = stasisColorInput.color();
+}
+
+// unstableColor is stored with the color picker's result.
+function setUnstableColor() {
+    unstableColor = unstableColorInput.color();
+}
+
+// lonelyColor is stored with the color picker's result.
+function setLonelyColor() {
+    lonelyColor = lonelyColorInput.color();
 }

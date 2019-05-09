@@ -103,7 +103,7 @@ textarea {
    ========================================================================== */
 
 body {
-    background-color: rgb(20, 20, 20);
+    background-color: #1f262f;
     color: white;
 }
 
@@ -117,26 +117,40 @@ input[type=text] {
     margin: 5px;
 }
 
+input[type=text]#rgb {
+    width: 15px;
+    margin: 5px;
+}
 
-#red-text{
+#unstable-text{
     color: rgb(255,0,0);
 }
 
-#blue-text{
+#lonely-text{
     color: rgb(29,85,216);
 }
 
-#green-text{
+#new-text{
     color: rgb(173,255,47);
 }
 
+#stable-text{
+    color: rgb(255, 255, 255)
+}
 
 
+img{
+    margin-left: 25px;
+}
 
+input[type=color]{
+    margin-top: 10px;
+}
 
-
-
-
+input[type=checkbox]{
+    margin-left: 27px;
+    margin-top: 10px;
+}
 
 
  /* ==========================================================================
