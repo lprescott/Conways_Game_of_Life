@@ -428,11 +428,16 @@ function mousePressed() {
         var automataXIndex = floor(mouseX / cellSize);
         var automataYIndex = floor(mouseY / cellSize);
 
+        // Left side, and top
+        if (automataXIndex == 0 || automataYIndex == 0 || automataXIndex == numCol-1 || automataYIndex == numRow-1) {
+            return;
+        } 
         // Set the selected automata to life or death
-        if(grid[automataXIndex][automataYIndex] == 0) { 
+        else if(grid[automataXIndex][automataYIndex] == 0) { 
             grid[automataXIndex][automataYIndex] = 1;
             colors[automataXIndex][automataYIndex] = stasisColor;
             nextGeneration[automataXIndex][automataYIndex] = 1;
+            
         } else {
             grid[automataXIndex][automataYIndex] = 0;
             colors[automataXIndex][automataYIndex] = black;
