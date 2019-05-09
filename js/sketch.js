@@ -428,11 +428,16 @@ function mousePressed() {
         var automataXIndex = floor(mouseX / cellSize);
         var automataYIndex = floor(mouseY / cellSize);
 
-        // Set the selected automata to life
-        grid[automataXIndex][automataYIndex] = 1;
-        colors[automataXIndex][automataYIndex] = stasisColor;
-        nextGeneration[automataXIndex][automataYIndex] = 1;
-
+        // Set the selected automata to life or death
+        if(grid[automataXIndex][automataYIndex] == 0) { 
+            grid[automataXIndex][automataYIndex] = 1;
+            colors[automataXIndex][automataYIndex] = stasisColor;
+            nextGeneration[automataXIndex][automataYIndex] = 1;
+        } else {
+            grid[automataXIndex][automataYIndex] = 0;
+            colors[automataXIndex][automataYIndex] = black;
+            nextGeneration[automataXIndex][automataYIndex] = 0;
+        }
     
         // If multiple edits is not checked, force a new generation
         if (!editsCheckbox.checked()){
