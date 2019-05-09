@@ -20,6 +20,7 @@ var stasisColor;
 var unstableColor;
 var lonelyColor;
 var backgroundColor;
+var outlineColor;
 
 var running = true;
 
@@ -39,6 +40,7 @@ function setup() {
     unstableColor = color(255,0,0);
     lonelyColor = color(29,85,216);
     backgroundColor = color(0,0,0);
+    outlineColor = color(0,0,0);
     
     // Specifies the number of frames to be displayed 
     // every second. 
@@ -95,9 +97,14 @@ function setup() {
     sizeInput.input(setSizeOnInput);
 
     // Background color
-    createDiv('<br><br>&nbsp;Background Color:'); 
+    createDiv('<br>&nbsp;Background:'); 
     backgroundColorInput = createColorPicker('#000000');
     backgroundColorInput.input(setBackgroundColor);
+
+    // New color
+    createDiv('<br>&nbsp;Outline:'); 
+    outlineColorInput = createColorPicker('#000000');
+    outlineColorInput.input(setOutlineColor);
 
     // New color
     createDiv('<br>&nbsp;New:'); 
@@ -172,7 +179,7 @@ function draw() {
             // around shapes.
             // stroke(): https://p5js.org/reference/#/p5/stroke 
             if (outlineCheckbox.checked()){
-                stroke(backgroundColor);
+                stroke(outlineColor);
             } else {
                 noStroke();
             }
@@ -317,7 +324,7 @@ function keyPressed() {
 
 function setSizeOnInput() {
 
-    if(this.value() > 5){
+    if(this.value() >= 5){
         
         cellSize = this.value();
         
@@ -376,6 +383,11 @@ function setBackgroundColor() {
             }
         }
     }
+}
+
+// outlineColor is stored with the color picker's result.
+function setOutlineColor() {
+    outlineColor = outlineColorInput.color();
 }
 
 // newColor is stored with the color picker's result.
