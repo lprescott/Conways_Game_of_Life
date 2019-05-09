@@ -5,7 +5,7 @@
 // ~~~~~~~~~~~~~~~~ Change These Global Variables ~~~~~~~~~~~~~~~~~~~~~
 
 var cellSize = 10;      // The length of one square side in pixels.
-var fps = 30;           // The speed of the animation in frames/second.
+var fps = 10;           // The speed of the animation in frames/second.
 var whiteOnly = 0;      // Set this value to 1 for only white automata.
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,6 +15,10 @@ var numCol;
 var numRow;
 var grid;
 var nextGeneration;
+var fpsSlider;
+var sizeSlider;
+
+var running = true;
 
 // The statements in the setup() function
 // execute once when the program begins
@@ -28,12 +32,12 @@ function setup() {
     // Creates a canvas element in the document, and 
     // sets the dimensions of it in pixels. 
     // createCanvas(): https://p5js.org/reference/#/p5/createCanvas
-    canvas = createCanvas(innerWidth, innerHeight);
-    canvas.position(0,0);
+    canvas = createCanvas(innerWidth-150, innerHeight);
+    canvas.position(150,0);
     canvas.style('z-index', '-1');
 
     // Find the number of cols and rows, and round it
-    numCol = round(innerWidth/cellSize);
+    numCol = round((innerWidth-150)/cellSize);
     numRow = round(innerHeight/cellSize);
 
     // Create a 2D array of the columns as an x-axis
@@ -60,6 +64,32 @@ function setup() {
         }
     }
 
+    // Label for fps slider
+    createDiv('&nbsp;Frames Per Second');
+    createDiv('&nbsp;(1-30 fps):');
+
+    // Slider for fps
+    fpsSlider = createSlider(1, 30, cellSize, 1);
+
+    // Label for size input
+    createDiv('<br>&nbsp;Size of automata');
+    createDiv('&nbsp;(5+ pixels):');
+
+    sizeInput = createInput(cellSize);
+    sizeInput.input(setSizeOnInput);
+
+    // Controls
+    createDiv('<br>&nbsp;Controls:'); 
+    createDiv('&nbsp;- L-Alt: restart'); 
+    createDiv('&nbsp;- SPACE: play/pause');
+
+    // Legend
+    createDiv('<br>&nbsp;Legend:'); 
+    createDiv('<div id="green-text">&nbsp;- Green: newborn</div>'); 
+    createDiv('<div id="white-text">&nbsp;- White: stasis</div>'); 
+    createDiv('<div id="red-text">&nbsp;- Red: crowded</div>'); 
+    createDiv('<div id="blue-text">&nbsp;- Blue: lonely</div>'); 
+
     // Call initialize to fill the grid randomly
     initialize();
 }
@@ -73,6 +103,11 @@ function setup() {
 // grid, checking if the bit value is 1 and colors it
 // depending on said bit value.
 function draw() {
+
+    if(!running) return;
+
+    // Set fps
+    frameRate(fpsSlider.value());
 
     // Create the next generation
     generation();
@@ -207,28 +242,63 @@ function generation() {
     nextGeneration = tempGrid;
 }
 
-// The mousePressed() function is called once after every time a 
-// mouse button is pressed over the element. 
-//
-// Pause processing fps.
-function mousePressed() {
-    frameRate(0);
-}
-
-// The mouseReleased() function is called once after every time a 
-// mouse button is released over the element.
-//
-// Set processing back to original fps.
-function mouseReleased() {
-    frameRate(fps);
-}
-
 // The keyPressed() function is called once every time a key is 
 // pressed. 
 function keyPressed() {
 
-    // Re-initialize upon space pressed.
-    if(keyCode == 32) { 
+    // Play/pause on space
+    if (keyCode == 32 ) {
+        running = !running;
+    } 
+
+    // Restart on L-Alt
+    else if (keyCode == 18) {
+        initialize();
+    }
+}
+
+function setSizeOnInput() {
+
+    if(this.value() > 5){
+        
+        cellSize = this.value();
+        
+        // Creates a canvas element in the document, and 
+        // sets the dimensions of it in pixels. 
+        // createCanvas(): https://p5js.org/reference/#/p5/createCanvas
+        canvas = createCanvas(innerWidth-150, innerHeight);
+        canvas.position(150,0);
+        canvas.style('z-index', '-1');
+
+        // Find the number of cols and rows, and round it
+        numCol = round((innerWidth-150)/cellSize);
+        numRow = round(innerHeight/cellSize);
+
+        // Create a 2D array of the columns as an x-axis
+        // and the rows as a y-axis, called grid.
+        //
+        // Create a duplicate sized 2D array, called
+        // nextGeneration.
+        //
+        // Create a third duplicate size 2D array, called
+        // colors;
+        grid = new Array(numCol);
+        nextGeneration = new Array(numCol);
+        colors = new Array(numCol);
+        for(var x = 0; x < numCol; x++) {
+            grid[x] = new Array(numRow);
+            nextGeneration[x] = new Array(numRow);
+            colors[x] = new Array(numRow);
+        }
+
+        // Start all colors at black
+        for(var x = 0; x < numCol; x++) {
+            for(var y = 0; y < numRow; y++){
+                colors[x][y] = color(0,0,0);
+            }
+        }
+
+        // Call initialize to fill the grid randomly
         initialize();
     }
 }

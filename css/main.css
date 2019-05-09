@@ -91,7 +91,7 @@ textarea {
 .browserupgrade {
     margin: 0.2em 0;
     background: #ccc;
-    color: #000;
+    color: rgb(37, 37, 37);
     padding: 0.2em 0;
 }
 
@@ -102,11 +102,33 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+body {
+    background-color: rgb(20, 20, 20);
+    color: white;
+}
+
+input[type=range] {
+    padding: 5px;
+    margin: 5px;
+}
+
+input[type=text] {
+    width: 139px;
+    margin: 5px;
+}
 
 
+#red-text{
+    color: rgb(255,0,0);
+}
 
+#blue-text{
+    color: rgb(29,85,216);
+}
 
-
+#green-text{
+    color: rgb(173,255,47);
+}
 
 
 
