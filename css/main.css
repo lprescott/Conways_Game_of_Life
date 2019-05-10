@@ -122,23 +122,6 @@ input[type=text]#rgb {
     margin: 5px;
 }
 
-#unstable-text{
-    color: rgb(255,0,0);
-}
-
-#lonely-text{
-    color: rgb(29,85,216);
-}
-
-#new-text{
-    color: rgb(173,255,47);
-}
-
-#stable-text{
-    color: rgb(255, 255, 255)
-}
-
-
 img{
     margin-left: 25px;
 }
