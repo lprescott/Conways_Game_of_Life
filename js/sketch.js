@@ -1,11 +1,10 @@
 // Luke R. Prescott
-// I-CSI 409
 // Conway's Game of Life
 
 // Declared Global Variables
 var cellSize = 10;      // The length of one square side in pixels.
 var fps = 10;           // The speed of the animation in frames/second.
-var controlsWidth = 150;// The width of the left bar.
+var controlsWidth = 170;// The width of the left bar.
 
 // Initialized Global Variables
 var numCol;             
